@@ -31,7 +31,7 @@ public class NetWorking {
     }
 
 
-    public void getListOfDuties(final NetWorkResponse netWorkResponse) {
+    void getListOfDuties(final NetWorkResponse netWorkResponse) {
 
         // Request a string response from the provided URL.
         StringRequest stringRequest = new StringRequest(Request.Method.GET, Constants.GET_LIST_OF_DUTIES,
@@ -109,10 +109,11 @@ public class NetWorking {
 
     }
 
-    public  void updateDutyStatus(String userId, final String checksum, JSONObject body, final NetWorkResponse netWorkResponse) {
+    public void updateDutyStatus(String userId, final String checksum, JSONObject body, final NetWorkResponse netWorkResponse) {
 
         // Request a string response from the provided URL.
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.PUT, Constants.UPDATE_DUTY_STATUS+userId, body, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.PUT, Constants.UPDATE_DUTY_STATUS + userId,
+                body, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
 
