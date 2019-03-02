@@ -240,7 +240,7 @@ public class MainActivity extends AppCompatActivity implements ItemClick {
         switch (curentState) {
             case "PLANNED":
                 //TODO: update the currentState tp In progress
-                Util.getInstance().updateState("START", "23.333", "25.332", userId, getApplicationContext());
+                Util.getInstance().updateState("START", String.valueOf(wayLatitude), String.valueOf(wayLongitude), userId, getApplicationContext());
                 break;
             case "IN_PROGRESS":
                 //TODO: update the currentState tp Completed
