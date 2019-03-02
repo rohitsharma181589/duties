@@ -24,7 +24,7 @@ public class Util {
     }
 
     public void checkAndShowNetworkConnectionToast(Context context){
-        if (checkInternetConnection(context))
+        if (!checkInternetConnection(context))
             showLongToast("Internet Connection required to perform this action",context);
     }
 
