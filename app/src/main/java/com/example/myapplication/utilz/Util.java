@@ -12,8 +12,6 @@ import com.example.myapplication.interfacesPck.NetWorkResponse;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import static com.example.myapplication.Constants.UPDATE_DUTY_STATUS_WITHOUT_BASE_URL;
-
 public class Util {
     private static final Util ourInstance = new Util();
 
@@ -68,7 +66,8 @@ public class Util {
             NetWorking.getInstance().updateDutyStatus(userId, generatedSecuredPasswordHash, jsonObject, new NetWorkResponse() {
                 @Override
                 public void onSuccess(JSONObject jsonObject) {
-                    showLongToast(jsonObject.toString(),context);
+//                    showLongToast(jsonObject.toString(),context);
+                    showShortToast("Updated Successfully",context);
                 }
 
                 @Override
@@ -79,7 +78,7 @@ public class Util {
 
         } catch (JSONException e) {
             e.printStackTrace();
-            Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
+            showShortToast("Some error happened! Please try later",context);
         }
     }
 }

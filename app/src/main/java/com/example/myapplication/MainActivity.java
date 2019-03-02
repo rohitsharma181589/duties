@@ -199,21 +199,16 @@ public class MainActivity extends AppCompatActivity implements ItemClick {
         });
     }
 
-    private void showDialog(String title, String message, String positiveButton, final boolean dialogForLocation) {
+    private void showDialog(String message) {
         new OoOAlertDialog.Builder(MainActivity.this)
-                .setTitle(title)
+                .setTitle("Details")
                 .setMessage(message)
                 .setAnimation(Animation.POP)
-                .setPositiveButton(positiveButton, new OnClickListener() {
+                .setPositiveButton("Update State", new OnClickListener() {
                     @Override
                     public void onClick() {
-                        if (!dialogForLocation) {
-                            Util.getInstance().checkAndShowNetworkConnectionToast(getApplicationContext());
-                            changeDutyStatus();
-                        } else {
-                            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                            startActivity(intent);
-                        }
+                        Util.getInstance().checkAndShowNetworkConnectionToast(getApplicationContext());
+                        changeDutyStatus();
                     }
                 })
                 .setNegativeButton("", null)
@@ -265,7 +260,7 @@ public class MainActivity extends AppCompatActivity implements ItemClick {
                         "\n" +
                         "Driving type:" +
                         type;
-                showDialog("Details", msg, "Update State", false);
+                showDialog(msg);
             }
 
             @Override

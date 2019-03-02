@@ -15,8 +15,8 @@ import java.util.Locale;
 public class DutiesAdapter extends RecyclerView.Adapter<DutiesAdapter.MyViewHolder> {
 
 
-    ArrayList<Integer> dutiesList;
-    ItemClick click;
+    private ArrayList<Integer> dutiesList;
+    private ItemClick click;
 
     DutiesAdapter(ArrayList<Integer> dutiesList, ItemClick itemClick){
         this.dutiesList=dutiesList;
