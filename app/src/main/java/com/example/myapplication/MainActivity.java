@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -20,6 +19,8 @@ import android.widget.Toast;
 
 import com.example.myapplication.interfacesPck.ItemClick;
 import com.example.myapplication.interfacesPck.NetWorkResponse;
+import com.example.myapplication.utilz.GpsUtils;
+import com.example.myapplication.utilz.Util;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -32,7 +33,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Locale;
 
 import br.com.joinersa.oooalertdialog.Animation;
 import br.com.joinersa.oooalertdialog.OnClickListener;
@@ -55,10 +55,6 @@ public class MainActivity extends AppCompatActivity implements ItemClick {
     private boolean isGPS = false;
     private String curentState = "", userId = "";
     private double wayLatitude = 0.0, wayLongitude = 0.0;
-
-
-    private int coarsePermissionRequestCode = 12;
-    private boolean dialogForLocation = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,19 +104,8 @@ public class MainActivity extends AppCompatActivity implements ItemClick {
             return;
         }
 
+        // GPS is on ask for permission and proceed.
         getLocation();
-
-
-//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-//                != PackageManager.PERMISSION_GRANTED) {
-//            // Permission is not granted
-//            ActivityCompat.requestPermissions(this,
-//                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
-//                    coarsePermissionRequestCode);
-//
-//        } else {
-//            getListOfDuties();
-//        }
 
     }
 
@@ -239,21 +224,15 @@ public class MainActivity extends AppCompatActivity implements ItemClick {
     private void changeDutyStatus() {
         switch (curentState) {
             case "PLANNED":
-                //TODO: update the currentState tp In progress
                 Util.getInstance().updateState("START", String.valueOf(wayLatitude), String.valueOf(wayLongitude), userId, getApplicationContext());
                 break;
             case "IN_PROGRESS":
-                //TODO: update the currentState tp Completed
                 Util.getInstance().updateState("COMPLETE", "23.333", "25.332", userId, getApplicationContext());
                 break;
             case "COMPLETED":
-                //TODO: update the currentState tp START
                 Util.getInstance().updateState("START", "23.333", "25.332", userId, getApplicationContext());
                 break;
         }
-
-        Toast.makeText(this, "Click Event", Toast.LENGTH_LONG).show();
-
     }
 
 
@@ -264,14 +243,10 @@ public class MainActivity extends AppCompatActivity implements ItemClick {
 
         Util.getInstance().checkAndShowNetworkConnectionToast(this);
         Util.getInstance().showLongToast("Getting details, Please wait.....", getApplicationContext());
-//        Toast.makeText(this, "Getting details, Please wait.....", Toast.LENGTH_LONG).show();
 
         String stringtToHash;
         userId = item;
-
         stringtToHash = "bluPriv@8,/api/v1/app/duty/" + item;
-
-//        String generatedSecuredPasswordHash = BCrypt.withDefaults().hashToString(12, stringtToHash.toCharArray());
         String generatedSecuredPasswordHash = com.example.myapplication.BCrypt.hashpw(stringtToHash, com.example.myapplication.BCrypt.gensalt(12));
         NetWorking.getInstance().getDutyDetail(item, generatedSecuredPasswordHash, new NetWorkResponse() {
             @Override
@@ -296,7 +271,6 @@ public class MainActivity extends AppCompatActivity implements ItemClick {
             @Override
             public void onError(String errorMsg) {
                 Log.e(TAG, errorMsg);
-//                Toast.makeText(getApplicationContext(), "Please try again", Toast.LENGTH_LONG).show();
                 Util.getInstance().showLongToast("Please try again", getApplicationContext());
             }
         });

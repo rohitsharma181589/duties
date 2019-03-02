@@ -18,12 +18,12 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-class NetWorking {
+public class NetWorking {
 
 
     private static final NetWorking ourInstance = new NetWorking();
 
-    static NetWorking getInstance() {
+    public static NetWorking getInstance() {
         return ourInstance;
     }
 
@@ -31,7 +31,7 @@ class NetWorking {
     }
 
 
-    void getListOfDuties(final NetWorkResponse netWorkResponse) {
+    public void getListOfDuties(final NetWorkResponse netWorkResponse) {
 
         // Request a string response from the provided URL.
         StringRequest stringRequest = new StringRequest(Request.Method.GET, Constants.GET_LIST_OF_DUTIES,
@@ -71,7 +71,7 @@ class NetWorking {
         App.getInstance().getRequestQueue().add(stringRequest);
     }
 
-    void getDutyDetail(String userId, final String checksum, final NetWorkResponse netWorkResponse) {
+    public void getDutyDetail(String userId, final String checksum, final NetWorkResponse netWorkResponse) {
 
         // Request a string response from the provided URL.
         StringRequest stringRequest = new StringRequest(Request.Method.GET, Constants.GET_DETAILS_OF_DUTY + userId,
@@ -109,7 +109,7 @@ class NetWorking {
 
     }
 
-    void updateDutyStatus(String userId, final String checksum, JSONObject body, final NetWorkResponse netWorkResponse) {
+    public  void updateDutyStatus(String userId, final String checksum, JSONObject body, final NetWorkResponse netWorkResponse) {
 
         // Request a string response from the provided URL.
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.PUT, Constants.UPDATE_DUTY_STATUS+userId, body, new Response.Listener<JSONObject>() {
