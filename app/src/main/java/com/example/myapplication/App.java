@@ -10,7 +10,7 @@ import com.android.volley.toolbox.Volley;
 public class App extends Application {
 
     private static App instance;
-   static RequestQueue requestQueue;
+    static RequestQueue requestQueue;
 
     public App() {
     }

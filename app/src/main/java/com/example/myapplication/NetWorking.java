@@ -18,12 +18,12 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-public class NetWorking {
+class NetWorking {
 
 
     private static final NetWorking ourInstance = new NetWorking();
 
-    public static NetWorking getInstance() {
+    static NetWorking getInstance() {
         return ourInstance;
     }
 
@@ -31,7 +31,7 @@ public class NetWorking {
     }
 
 
-    public void getListOfDuties(final NetWorkResponse netWorkResponse) {
+    void getListOfDuties(final NetWorkResponse netWorkResponse) {
 
         // Request a string response from the provided URL.
         StringRequest stringRequest = new StringRequest(Request.Method.GET, Constants.GET_LIST_OF_DUTIES,
@@ -40,9 +40,9 @@ public class NetWorking {
                     public void onResponse(String response) {
                         Log.w("", "" + response);
                         try {
-                            JSONArray jsonArray=new JSONArray(response);
-                            JSONObject jsonObject=new JSONObject();
-                            jsonObject.put("array",jsonArray);
+                            JSONArray jsonArray = new JSONArray(response);
+                            JSONObject jsonObject = new JSONObject();
+                            jsonObject.put("array", jsonArray);
                             netWorkResponse.onSuccess(jsonObject);
                         } catch (JSONException e) {
                             netWorkResponse.onError("JSON Exception");
@@ -71,7 +71,7 @@ public class NetWorking {
         App.getInstance().getRequestQueue().add(stringRequest);
     }
 
-    public void getDutyDetail(String userId, final String checksum, final NetWorkResponse netWorkResponse) {
+    void getDutyDetail(String userId, final String checksum, final NetWorkResponse netWorkResponse) {
 
         // Request a string response from the provided URL.
         StringRequest stringRequest = new StringRequest(Request.Method.GET, Constants.GET_DETAILS_OF_DUTY + userId,
@@ -109,16 +109,10 @@ public class NetWorking {
 
     }
 
-    public void updateDutyStatus(String userId, final String checksum, String body, final NetWorkResponse netWorkResponse) {
-        JSONObject jsonObject = null;
-        try {
-            jsonObject = new JSONObject(body);
-        } catch (JSONException e) {
-            netWorkResponse.onError("JSON Exception");
-        }
+    void updateDutyStatus(String userId, final String checksum, JSONObject body, final NetWorkResponse netWorkResponse) {
 
         // Request a string response from the provided URL.
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.PUT, Constants.UPDATE_DUTY_STATUS, jsonObject, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.PUT, Constants.UPDATE_DUTY_STATUS+userId, body, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
 
@@ -133,9 +127,16 @@ public class NetWorking {
         }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                return super.getHeaders();
+                HashMap<String, String> headers = new HashMap<>(2);
+                headers.put("Content-Type", "application/json");
+                headers.put("checksum", checksum);
+                return headers;
             }
         };
+
+        jsonObjectRequest.setShouldCache(false);
+        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy());
+        App.getInstance().getRequestQueue().add(jsonObjectRequest);
 
     }
 

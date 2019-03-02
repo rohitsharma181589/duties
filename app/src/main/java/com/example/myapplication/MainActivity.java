@@ -17,11 +17,18 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import at.favre.lib.crypto.bcrypt.BCrypt;
 import br.com.joinersa.oooalertdialog.Animation;
 import br.com.joinersa.oooalertdialog.OnClickListener;
 import br.com.joinersa.oooalertdialog.OoOAlertDialog;
 
+import static com.example.myapplication.Constants.UPDATE_DUTY_STATUS_WITHOUT_BASE_URL;
+
+
+/**
+ * BCrypt link https://github.com/benjholla/Android-Applications/blob/master/Android%20Applications/Secrets/Secrets/src/org/mindrot/jbcrypt/BCrypt.java
+ * Activity to perform all user actions for the required actions of the app.
+ * This is an single activity application, all the operations are performed with this activity.
+ */
 public class MainActivity extends AppCompatActivity implements ItemClick {
 
     private final String TAG = MainActivity.class.getSimpleName();
@@ -30,7 +37,7 @@ public class MainActivity extends AppCompatActivity implements ItemClick {
     DutiesAdapter dutiesAdapter;
     ArrayList<Integer> dutiesItems = new ArrayList<>(0);
 
-    private String curentState = "";
+    private String curentState = "", userId = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements ItemClick {
     }
 
     private void getListOfDuties() {
+        Util.getInstance().checkAndShowNetworkConnectionToast(this);
         NetWorking.getInstance().getListOfDuties(new NetWorkResponse() {
             @Override
             public void onSuccess(JSONObject jsonObject) {
@@ -77,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements ItemClick {
                 .setPositiveButton(positiveText, new OnClickListener() {
                     @Override
                     public void onClick() {
+                        Util.getInstance().checkAndShowNetworkConnectionToast(getApplicationContext());
                         changeDutyStatus();
                     }
                 })
@@ -84,19 +93,20 @@ public class MainActivity extends AppCompatActivity implements ItemClick {
                 .build();
     }
 
+
     private void changeDutyStatus() {
         switch (curentState) {
-            case "START":
+            case "PLANNED":
                 //TODO: update the currentState tp In progress
-                updateState("IN_PROGRESS");
+                updateState("START", "23.333", "25.332", userId);
                 break;
             case "IN_PROGRESS":
                 //TODO: update the currentState tp Completed
-                updateState("COMPLETED");
+                updateState("COMPLETE", "23.333", "25.332", userId);
                 break;
             case "COMPLETED":
                 //TODO: update the currentState tp START
-                updateState("START");
+                updateState("START", "23.333", "25.332", userId);
                 break;
         }
 
@@ -104,18 +114,46 @@ public class MainActivity extends AppCompatActivity implements ItemClick {
 
     }
 
-    private void updateState(String action){
-        JSONObject jsonObject=new JSONObject();
+
+    //Checksum pattern: //bluPriv@8,START,BLU-SMART,23.333,25.332,1496982995000,/api/v1/app/update/duty/4359,puneet
+    private void updateState(String action, String latitute, String longitude, String userId) {
+        JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("action",action);
-            jsonObject.put("assigned","BLU-SMART");
-            jsonObject.put("timestamp",action);
-            jsonObject.put("user","puneet");
-            jsonObject.put("latitude",action);
-            jsonObject.put("longitude",action);
+
+            String timeStamp = String.valueOf(System.currentTimeMillis());
+            String uri = UPDATE_DUTY_STATUS_WITHOUT_BASE_URL + userId;
+            jsonObject.put("action", action);
+            jsonObject.put("assigned", "BLU-SMART");
+            jsonObject.put("latitude", latitute);
+            jsonObject.put("longitude", longitude);
+            jsonObject.put("timestamp", timeStamp);
+            jsonObject.put("uri", uri);
+            jsonObject.put("user", "puneet");
+
+            String checksum = "bluPriv@8," + action + ",BLU-SMART," + latitute + "," + longitude + "," + timeStamp + ",/api/v1/app/update/duty/" + userId + ",puneet";
+
+//            String generatedSecuredPasswordHash = BCrypt.withDefaults().hashToString(12, checksum.toCharArray());
+
+//            String generatedSecuredPasswordHash  = BCrypt.with(LongPasswordStrategies.hashSha512()).hashToString(12, checksum.toCharArray());
+            String generatedSecuredPasswordHash = com.example.myapplication.BCrypt.hashpw(checksum, com.example.myapplication.BCrypt.gensalt(12));
+
+
+            NetWorking.getInstance().updateDutyStatus(userId, generatedSecuredPasswordHash, jsonObject, new NetWorkResponse() {
+                @Override
+                public void onSuccess(JSONObject jsonObject) {
+                    Toast.makeText(getApplicationContext(), jsonObject.toString(), Toast.LENGTH_LONG).show();
+                }
+
+                @Override
+                public void onError(String errorMsg) {
+                    Toast.makeText(getApplicationContext(), errorMsg, Toast.LENGTH_LONG).show();
+
+                }
+            });
 
         } catch (JSONException e) {
             e.printStackTrace();
+            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 
@@ -124,14 +162,17 @@ public class MainActivity extends AppCompatActivity implements ItemClick {
 
         //bluPriv@8,/api/v1/app/duty/4356
 
-        Toast.makeText(this, "Getting details, Please wait.....", Toast.LENGTH_LONG).show();
+        Util.getInstance().checkAndShowNetworkConnectionToast(this);
+        Util.getInstance().showLongToast("Getting details, Please wait.....",getApplicationContext());
+//        Toast.makeText(this, "Getting details, Please wait.....", Toast.LENGTH_LONG).show();
 
         String stringtToHash;
+        userId = item;
 
         stringtToHash = "bluPriv@8,/api/v1/app/duty/" + item;
 
-        String generatedSecuredPasswordHash = BCrypt.withDefaults().hashToString(12, stringtToHash.toCharArray());
-
+//        String generatedSecuredPasswordHash = BCrypt.withDefaults().hashToString(12, stringtToHash.toCharArray());
+        String generatedSecuredPasswordHash = com.example.myapplication.BCrypt.hashpw(stringtToHash, com.example.myapplication.BCrypt.gensalt(12));
         NetWorking.getInstance().getDutyDetail(item, generatedSecuredPasswordHash, new NetWorkResponse() {
             @Override
             public void onSuccess(JSONObject jsonObject) {
@@ -157,7 +198,8 @@ public class MainActivity extends AppCompatActivity implements ItemClick {
             @Override
             public void onError(String errorMsg) {
                 Log.e(TAG, errorMsg);
-                Toast.makeText(getApplicationContext(), "Please try again", Toast.LENGTH_LONG).show();
+//                Toast.makeText(getApplicationContext(), "Please try again", Toast.LENGTH_LONG).show();
+                Util.getInstance().showLongToast("Please try again",getApplicationContext());
             }
         });
 
