@@ -79,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements ItemClick {
             public void gpsStatus(boolean isGPSEnable) {
                 // turn on GPS
                 isGPS = isGPSEnable;
+                if (isGPS) getLocation();
             }
         });
 
@@ -101,11 +102,11 @@ public class MainActivity extends AppCompatActivity implements ItemClick {
 
         if (!isGPS) {
             Util.getInstance().showLongToast("Please on GPS of Device", getApplicationContext());
-            return;
+//            return;
         }
 
         // GPS is on ask for permission and proceed.
-        getLocation();
+//        getLocation();
 
     }
 
@@ -208,6 +209,7 @@ public class MainActivity extends AppCompatActivity implements ItemClick {
                     @Override
                     public void onClick() {
                         Util.getInstance().checkAndShowNetworkConnectionToast(getApplicationContext());
+                        Util.getInstance().showShortToast("Updating State", getApplicationContext());
                         changeDutyStatus();
                     }
                 })
@@ -219,13 +221,16 @@ public class MainActivity extends AppCompatActivity implements ItemClick {
     private void changeDutyStatus() {
         switch (curentState) {
             case "PLANNED":
-                Util.getInstance().updateState("START", String.valueOf(wayLatitude), String.valueOf(wayLongitude), userId, getApplicationContext());
+                Util.getInstance().updateState("START", String.valueOf(wayLatitude),
+                        String.valueOf(wayLongitude), userId, getApplicationContext());
                 break;
             case "IN_PROGRESS":
-                Util.getInstance().updateState("COMPLETE", "23.333", "25.332", userId, getApplicationContext());
+                Util.getInstance().updateState("COMPLETE", String.valueOf(wayLatitude),
+                        String.valueOf(wayLongitude), userId, getApplicationContext());
                 break;
             case "COMPLETED":
-                Util.getInstance().updateState("START", "23.333", "25.332", userId, getApplicationContext());
+                Util.getInstance().updateState("START", String.valueOf(wayLatitude),
+                        String.valueOf(wayLongitude), userId, getApplicationContext());
                 break;
         }
     }

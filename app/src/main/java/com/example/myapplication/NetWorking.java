@@ -71,7 +71,7 @@ public class NetWorking {
         App.getInstance().getRequestQueue().add(stringRequest);
     }
 
-    public void getDutyDetail(String userId, final String checksum, final NetWorkResponse netWorkResponse) {
+    void getDutyDetail(String userId, final String checksum, final NetWorkResponse netWorkResponse) {
 
         // Request a string response from the provided URL.
         StringRequest stringRequest = new StringRequest(Request.Method.GET, Constants.GET_DETAILS_OF_DUTY + userId,
