@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.myapplication.interfacesPck.ItemClick;
@@ -18,9 +19,9 @@ public class DutiesAdapter extends RecyclerView.Adapter<DutiesAdapter.MyViewHold
     private ArrayList<Integer> dutiesList;
     private ItemClick click;
 
-    DutiesAdapter(ArrayList<Integer> dutiesList, ItemClick itemClick){
-        this.dutiesList=dutiesList;
-        click=itemClick;
+    DutiesAdapter(ArrayList<Integer> dutiesList, ItemClick itemClick) {
+        this.dutiesList = dutiesList;
+        click = itemClick;
     }
 
 
@@ -34,9 +35,9 @@ public class DutiesAdapter extends RecyclerView.Adapter<DutiesAdapter.MyViewHold
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, int i) {
 
-        final int id=dutiesList.get(i);
-        myViewHolder.textView.setText(String.format(Locale.ENGLISH,"%d", id));
-        myViewHolder.textView.setOnClickListener(new View.OnClickListener() {
+        final int id = dutiesList.get(i);
+        myViewHolder.textView.setText(String.format(Locale.ENGLISH, "%d", id));
+        myViewHolder.parent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 click.onItemClick(String.valueOf(id));
@@ -52,12 +53,13 @@ public class DutiesAdapter extends RecyclerView.Adapter<DutiesAdapter.MyViewHold
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         private TextView textView;
+        private LinearLayout parent;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
-            textView=itemView.findViewById(R.id.tv_duties);
+            textView = itemView.findViewById(R.id.tv_duties);
+            parent = itemView.findViewById(R.id.ll_parent);
         }
-
 
 
     }

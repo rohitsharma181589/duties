@@ -105,6 +105,7 @@ public class MainActivity extends AppCompatActivity implements ItemClick {
 //            return;
         }
 
+        Util.getInstance().showLongToast("Getting list of duties, Please wait......", this);
         // GPS is on ask for permission and proceed.
 //        getLocation();
 
@@ -200,9 +201,9 @@ public class MainActivity extends AppCompatActivity implements ItemClick {
         });
     }
 
-    private void showDialog(String message) {
+    private void showDialog(String message, String userId) {
         new OoOAlertDialog.Builder(MainActivity.this)
-                .setTitle("Details")
+                .setTitle("Details of" + userId)
                 .setMessage(message)
                 .setAnimation(Animation.POP)
                 .setPositiveButton("Update State", new OnClickListener() {
@@ -265,7 +266,7 @@ public class MainActivity extends AppCompatActivity implements ItemClick {
                         "\n" +
                         "Driving type:" +
                         type;
-                showDialog(msg);
+                showDialog(msg, String.valueOf(id));
             }
 
             @Override
